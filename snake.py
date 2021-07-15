@@ -61,7 +61,7 @@ class player():
         Food.generate(Player=self, screen=screen)
 class food():
     coordinates = Vector2()
-    color = (204, 0, 0)
+    color = (205, 0, 0)
     length = Vector2(25, 25)
     border_Radius = 3
 
