@@ -8,7 +8,8 @@ from pygame import draw
 from pygame.constants import K_DOWN, K_LEFT, K_RIGHT, K_SPACE, K_UP, K_d
 
 WIDTH, HEIGHT = 1400, 900
-FPS = 20
+FPS = 60
+DT = 1/FPS
 SCREEN = display.set_mode((WIDTH, HEIGHT))
 display.set_caption("Testing game")
 
@@ -18,9 +19,12 @@ PIX_ARR = pygame.PixelArray(SCREEN)
 class player():
     updated = True
     points = 0
+    move_queue = []
     coordinates = Vector2(0, 0)
     direction = 3
-    speed = Vector2(25, 0)
+    # Need to solve this problem
+    speed_per = 25/(FPS/8)
+    speed = Vector2(25/(FPS/10), 0)
     color = (0, 146, 15)
     length = Vector2(25, 25)
     border_Radius = 3
@@ -30,15 +34,17 @@ class player():
         draw.rect(screen, color, rect, border_radius=border_Radius)
     
     def update(self, screen, Food):
-        if self.updated == False:
-            if self.direction == 0:
-                self.speed = Vector2(0, -25)
-            elif self.direction == 1:
-                self.speed = Vector2(0, 25)
-            elif self.direction == 2:
-                self.speed = Vector2(-25, 0)
-            elif self.direction == 3:
-                self.speed = Vector2(25, 0)
+        print(self.coordinates)
+        if self.coordinates.x % 25 == 0 and self.coordinates.y % 25 == 0 and len(self.move_queue) != 0:
+            direction = self.move_queue.pop(0)
+            if direction == 0:
+                self.speed = Vector2(0, -1 * self.speed_per)
+            elif direction == 1:
+                self.speed = Vector2(0, self.speed_per)
+            elif direction == 2:
+                self.speed = Vector2(-1 * self.speed_per, 0)
+            elif direction == 3:
+                self.speed = Vector2(self.speed_per, 0)
             
             self.updated = True
         
@@ -107,21 +113,16 @@ def main():
                 elif Event.key == K_d and ONE_AT_A_TIME:
                     draw_window(Player, Food, SCREEN, SCREEN_COLOR)
                 elif Event.key == K_RIGHT and Player.direction != 3 and Player.direction != 2:
-                    Player.direction = 3
-                    Player.updated = False
+                    Player.move_queue.append(3)
                 elif Event.key == K_LEFT and Player.direction != 2 and Player.direction != 3:
-                    Player.direction = 2
-                    Player.updated = False
+                    Player.move_queue.append(2)
                 elif Event.key == K_UP and Player.direction != 0 and Player.direction != 1:
-                    Player.direction = 0
-                    Player.updated = False
+                    Player.move_queue.append(0)
                 elif Event.key == K_DOWN and Player.direction != 1 and Player.direction != 0:
-                    Player.direction = 1
-                    Player.updated = False
+                    Player.move_queue.append(1)
                     
         if ONE_AT_A_TIME == False:
             clock.tick(FPS)
-            clock.get_time()
             draw_window(Player, Food, SCREEN, SCREEN_COLOR)
     pygame.quit()
 
