@@ -1,7 +1,8 @@
+import fractions
 import pygame
 import random
 from pygame import Vector2, display
-from pygame import time
+from pygame import time as pygame_time
 from pygame import key
 from pygame import event
 from pygame import draw
@@ -9,22 +10,19 @@ from pygame.constants import K_DOWN, K_LEFT, K_RIGHT, K_SPACE, K_UP, K_d
 
 WIDTH, HEIGHT = 1400, 900
 FPS = 60
-DT = 1/FPS
 SCREEN = display.set_mode((WIDTH, HEIGHT))
 display.set_caption("Testing game")
-
 SCREEN_COLOR = (0, 0, 0)
 PIX_ARR = pygame.PixelArray(SCREEN)
 
 class player():
-    updated = True
     points = 0
     move_queue = []
     coordinates = Vector2(0, 0)
     direction = 3
-    # Need to solve this problem
-    speed_per = 25/(FPS/8)
-    speed = Vector2(25/(FPS/10), 0)
+    speed_per = 25/0.1/FPS
+    speed = Vector2(1, 0)
+    frame_count = Vector2(0, 0)
     color = (0, 146, 15)
     length = Vector2(25, 25)
     border_Radius = 3
@@ -34,37 +32,30 @@ class player():
         draw.rect(screen, color, rect, border_radius=border_Radius)
     
     def update(self, screen, Food):
-        print(self.coordinates)
-        if self.coordinates.x % 25 == 0 and self.coordinates.y % 25 == 0 and len(self.move_queue) != 0:
-            direction = self.move_queue.pop(0)
-            if direction == 0:
-                self.speed = Vector2(0, -1 * self.speed_per)
-            elif direction == 1:
-                self.speed = Vector2(0, self.speed_per)
-            elif direction == 2:
-                self.speed = Vector2(-1 * self.speed_per, 0)
-            elif direction == 3:
-                self.speed = Vector2(self.speed_per, 0)
-            
-            self.updated = True
+        self.frame_count.x += self.speed.x
+        self.frame_count.y += self.speed.y
+        self.coordinates.x = round(self.frame_count.x * self.speed_per, 7)
+        self.coordinates.y = round(self.frame_count.y * self.speed_per, 7)
+        # print(self.coordinates)
+        if self.coordinates.x % 25 == 0 and self.coordinates.y % 25 == 0 and len(self.move_queue) > 0:
+            self.direction = self.move_queue.pop(0)
+            if self.direction == 0:
+                self.speed = Vector2(0, -1)
+            elif self.direction == 1:
+                self.speed = Vector2(0, 1)
+            elif self.direction == 2:
+                self.speed = Vector2(-1, 0)
+            elif self.direction == 3:
+                self.speed = Vector2(1, 0)
         
-        self.coordinates.x += self.speed.x
-        self.coordinates.y += self.speed.y
-        if self.coordinates.x >= WIDTH:
-            self.coordinates.x = 0
-        elif self.coordinates.x < 0:
-            self.coordinates.x = WIDTH
-        elif self.coordinates.y >= HEIGHT:
-            self.coordinates.y = 0
-        elif self.coordinates.y < 0:
-            self.coordinates.y = HEIGHT - 25
+        if self.coordinates.x >= WIDTH or self.coordinates.x < 0 or self.coordinates.y >= HEIGHT or self.coordinates.y < 0:
+            pygame.quit()
 
         if self.coordinates.x == Food.coordinates.x and self.coordinates.y == Food.coordinates.y:
             self.points += 1
             print(self.points)
-        
-        self.draw(screen, self.coordinates, self.length, self.color, self.border_Radius)
         Food.generate(Player=self, screen=screen)
+        self.draw(screen, self.coordinates, self.length, self.color, self.border_Radius)
 class food():
     coordinates = Vector2()
     color = (205, 0, 0)
@@ -98,7 +89,7 @@ Food.random()
 Food.generate(Player, SCREEN)
 
 def main():
-    clock = time.Clock()
+    clock = pygame_time.Clock()
     ONE_AT_A_TIME = False
     run = True
     while run:
@@ -120,7 +111,7 @@ def main():
                     Player.move_queue.append(0)
                 elif Event.key == K_DOWN and Player.direction != 1 and Player.direction != 0:
                     Player.move_queue.append(1)
-                    
+
         if ONE_AT_A_TIME == False:
             clock.tick(FPS)
             draw_window(Player, Food, SCREEN, SCREEN_COLOR)
