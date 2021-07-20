@@ -29,7 +29,7 @@ class player():
     head_coordinates = Vector2(0, 0)
     head_move_queue = []
     direction = 3
-    speed_per = 50/0.15/FPS
+    speed_per = 50/0.1/FPS
     head_speed = Vector2(1, 0)
     frame_count = Vector2(0, 0)
 
@@ -60,9 +60,9 @@ class player():
                 self.points += 1
                 self.body_num += 1
                 if self.body_num == 1:
-                    self.body_list.append([Vector2(self.head_coordinates.x - 50 * self.head_speed.x, self.head_coordinates.y - 50 * self.head_speed.y), self.head_speed, Vector2(self.frame_count.x - 9 * self.head_speed.x, self.frame_count.y - 9 * self.head_speed.y)])
+                    self.body_list.append([Vector2(self.head_coordinates.x - 50 * self.head_speed.x, self.head_coordinates.y - 50 * self.head_speed.y), self.head_speed, Vector2(self.frame_count.x - 6 * self.head_speed.x, self.frame_count.y - 6 * self.head_speed.y)])
                 else:
-                    self.body_list.append([Vector2(self.body_list[-1][0].x - 50 * self.body_list[-1][1].x, self.body_list[-1][0].y - 50 * self.body_list[-1][1].y), self.body_list[-1][1], Vector2(self.body_list[-1][2].x - 9 * self.body_list[-1][1].x, self.body_list[-1][2].y - 9 * self.body_list[-1][1].y)])
+                    self.body_list.append([Vector2(self.body_list[-1][0].x - 50 * self.body_list[-1][1].x, self.body_list[-1][0].y - 50 * self.body_list[-1][1].y), self.body_list[-1][1], Vector2(self.body_list[-1][2].x - 6 * self.body_list[-1][1].x, self.body_list[-1][2].y - 6 * self.body_list[-1][1].y)])
 
             # Updates the body speed values
             if self.body_num > 0:
