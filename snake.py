@@ -90,11 +90,11 @@ class player():
             # Checks and handles collisions between body and head
             for i in self.body_list:
                 if self.head_coordinates == i[0]:
-                    return True, self.points
+                    pygame.quit()
         
         # Checks if head is out of bounds
         if self.head_coordinates.x >= WIDTH or self.head_coordinates.x < 0 or self.head_coordinates.y >= HEIGHT or self.head_coordinates.y < 0:
-                return True, self.points
+            pygame.quit()
 
         # Draws the objects to screen
         for i in self.body_list:
@@ -148,8 +148,6 @@ def main():
     while run:
         for Event in event.get():
             if Event.type == pygame.QUIT:
-                run = False
-            elif GAME_OVER:
                 run = False
             elif key.get_focused and Event.type == pygame.KEYDOWN:
                 if Event.key == K_SPACE and ONE_AT_A_TIME == False:
