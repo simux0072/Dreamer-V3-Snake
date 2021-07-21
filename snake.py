@@ -60,9 +60,13 @@ class player():
                 self.points += 1
                 self.body_num += 1
                 if self.body_num == 1:
-                    self.body_list.append([Vector2(self.head_coordinates.x - 50 * self.head_speed.x, self.head_coordinates.y - 50 * self.head_speed.y), self.head_speed, Vector2(self.frame_count.x - 6 * self.head_speed.x, self.frame_count.y - 6 * self.head_speed.y)])
+                    self.body_list.append([Vector2(self.head_coordinates.x - 50 * self.head_speed.x, self.head_coordinates.y - 50 * self.head_speed.y), 
+                                            self.head_speed, 
+                                            Vector2(self.frame_count.x - 6 * self.head_speed.x, self.frame_count.y - 6 * self.head_speed.y)])
                 else:
-                    self.body_list.append([Vector2(self.body_list[-1][0].x - 50 * self.body_list[-1][1].x, self.body_list[-1][0].y - 50 * self.body_list[-1][1].y), self.body_list[-1][1], Vector2(self.body_list[-1][2].x - 6 * self.body_list[-1][1].x, self.body_list[-1][2].y - 6 * self.body_list[-1][1].y)])
+                    self.body_list.append([Vector2(self.body_list[-1][0].x - 50 * self.body_list[-1][1].x, self.body_list[-1][0].y - 50 * self.body_list[-1][1].y), 
+                                            self.body_list[-1][1], 
+                                            Vector2(self.body_list[-1][2].x - 6 * self.body_list[-1][1].x, self.body_list[-1][2].y - 6 * self.body_list[-1][1].y)])
 
             # Updates the body speed values
             if self.body_num > 0:
@@ -86,11 +90,11 @@ class player():
             # Checks and handles collisions between body and head
             for i in self.body_list:
                 if self.head_coordinates == i[0]:
-                    pygame.quit()
+                    return True, self.points
         
         # Checks if head is out of bounds
         if self.head_coordinates.x >= WIDTH or self.head_coordinates.x < 0 or self.head_coordinates.y >= HEIGHT or self.head_coordinates.y < 0:
-                pygame.quit() 
+                return True, self.points
 
         # Draws the objects to screen
         for i in self.body_list:
@@ -144,6 +148,8 @@ def main():
     while run:
         for Event in event.get():
             if Event.type == pygame.QUIT:
+                run = False
+            elif GAME_OVER:
                 run = False
             elif key.get_focused and Event.type == pygame.KEYDOWN:
                 if Event.key == K_SPACE and ONE_AT_A_TIME == False:
