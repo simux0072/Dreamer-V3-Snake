@@ -19,6 +19,9 @@ def update(screen, coordinates, length, color, border_Radius):
     rect = pygame.Rect(coordinates.x, coordinates.y, length.x, length.y)
     draw.rect(screen, color, rect, border_radius=border_Radius)
 
+def update_circle(color, coordinates, circle_radius):
+    draw.circle(SCREEN, color, coordinates, circle_radius)
+
 class player():
     # Body data
     body_list = []
@@ -99,7 +102,7 @@ class player():
         # Draws the objects to screen
         for i in self.body_list:
             update(screen, i[0], self.length, self.body_color, self.body_border_Radius)
-        Food.generate(self, screen)
+        Food.generate(self)
         update(screen, self.head_coordinates, self.length, self.head_color, self.head_border_Radius)
 
 class food():
@@ -113,7 +116,7 @@ class food():
         self.coordinates.y = random.randrange(0, HEIGHT - 50, 50)
 
     # Function to call the random function and update the food location
-    def generate(self, Player, screen):
+    def generate(self, Player):
         while True:
             m = 0
             if self.coordinates == Player.head_coordinates:
@@ -125,7 +128,8 @@ class food():
                         self.random()
                 if m == 0:
                     break
-        update(screen, self.coordinates, self.length, self.color, self.border_Radius)
+        new_coordinates = Vector2(self.coordinates.x + self.length.x/2, self.coordinates.y + self.length.y/2)
+        update_circle(self.color, new_coordinates, self.length.x/2)
 
 Player = player()
 Food = food()
@@ -138,7 +142,7 @@ def draw_window(player, food, screen, screen_color):
 
 SCREEN.fill(SCREEN_COLOR)
 Food.random()
-Food.generate(Player, SCREEN)
+Food.generate(Player)
 
 # Main game loop
 def main():
