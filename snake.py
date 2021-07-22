@@ -3,8 +3,8 @@ import random
 from pygame import Vector2, display
 from pygame import time as pygame_time
 from pygame import key
-from pygame import event
 from pygame import draw
+from pygame import event
 from pygame.constants import K_DOWN, K_LEFT, K_RIGHT, K_SPACE, K_UP, K_d
 
 WIDTH, HEIGHT = 1400, 900
