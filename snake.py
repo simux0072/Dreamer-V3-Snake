@@ -1,18 +1,20 @@
 import pygame
 import random
-from pygame import Vector2, display
+from pygame import Vector2, display, font
 from pygame import time as pygame_time
 from pygame import key
 from pygame import draw
 from pygame import event
 from pygame.constants import K_DOWN, K_LEFT, K_RIGHT, K_SPACE, K_UP, K_d
 
+pygame.init()
+
 WIDTH, HEIGHT = 1400, 900
 FPS = 60
 SCREEN = display.set_mode((WIDTH, HEIGHT))
 display.set_caption("Testing game")
 SCREEN_COLOR = (0, 0, 0)
-PIX_ARR = pygame.PixelArray(SCREEN)
+Font = font.SysFont('aria', 50)
 
 # Function to draw the Body/Head/Food to screen
 def update(screen, coordinates, length, color, border_Radius):
@@ -80,15 +82,18 @@ class player():
                         self.body_list[i][1] = self.body_list[i - 1][1]
             # Handels direction change from player input
             if len(self.head_move_queue) > 0:
+                
                 self.direction = self.head_move_queue.pop(0)
-            if self.direction == 0:
-                self.head_speed = Vector2(0, -1)
-            elif self.direction == 1:
-                self.head_speed = Vector2(0, 1)
-            elif self.direction == 2:
-                self.head_speed = Vector2(-1, 0)
-            elif self.direction == 3:
-                self.head_speed = Vector2(1, 0)
+
+                if self.direction == 0:
+                    self.head_speed = Vector2(0, -1)
+                elif self.direction == 1:
+                    self.head_speed = Vector2(0, 1)
+                elif self.direction == 2:
+                    self.head_speed = Vector2(-1, 0)
+                elif self.direction == 3:
+                    self.head_speed = Vector2(1, 0)
+                
         
             # Checks and handles collisions between body and head
             for i in self.body_list:
@@ -138,6 +143,8 @@ Food = food()
 def draw_window(player, food, screen, screen_color):
     SCREEN.fill(screen_color)
     player.player_logic(screen, food)
+    text = Font.render("Score: " + str(player.points), True, (255, 255, 255))
+    screen.blit(text, Vector2(0, 0))
     display.update()
 
 SCREEN.fill(SCREEN_COLOR)
@@ -160,14 +167,30 @@ def main():
                     ONE_AT_A_TIME = False
                 elif Event.key == K_d and ONE_AT_A_TIME:
                     draw_window(Player, Food, SCREEN, SCREEN_COLOR)
-                elif Event.key == K_RIGHT and Player.direction != 3 and Player.direction != 2:
-                    Player.head_move_queue.append(3)
-                elif Event.key == K_LEFT and Player.direction != 2 and Player.direction != 3:
-                    Player.head_move_queue.append(2)
-                elif Event.key == K_UP and Player.direction != 0 and Player.direction != 1:
-                    Player.head_move_queue.append(0)
-                elif Event.key == K_DOWN and Player.direction != 1 and Player.direction != 0:
-                    Player.head_move_queue.append(1)
+                elif Event.key == K_RIGHT:
+                    try:
+                        if Player.head_move_queue[-1] != 3 or Player.head_move_queue[-1] != 2:
+                            Player.head_move_queue.append(3)
+                    except IndexError:
+                        Player.head_move_queue.append(3)
+                elif Event.key == K_LEFT:
+                    try:
+                        if Player.head_move_queue[-1] != 2 or Player.head_move_queue[-1] != 3:
+                            Player.head_move_queue.append(2)
+                    except IndexError:
+                        Player.head_move_queue.append(2)
+                elif Event.key == K_UP:
+                    try:
+                        if Player.head_move_queue[-1] != 0 or Player.head_move_queue[-1] != 1:
+                            Player.head_move_queue.append(0)
+                    except IndexError:
+                        Player.head_move_queue.append(0)
+                elif Event.key == K_DOWN:
+                    try:
+                        if Player.head_move_queue[-1] != 1 or Player.head_move_queue[-1] != 0:
+                            Player.head_move_queue.append(1)
+                    except IndexError:
+                        Player.head_move_queue.append(1)
 
         if ONE_AT_A_TIME == False:
             clock.tick(FPS)
