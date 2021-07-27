@@ -9,6 +9,8 @@ from pygame.constants import K_DOWN, K_LEFT, K_RIGHT, K_SPACE, K_UP, K_d
 
 pygame.init()
 
+
+#  Global variables
 WIDTH, HEIGHT = 1400, 900
 FPS = 60
 SCREEN = display.set_mode((WIDTH, HEIGHT))
@@ -21,6 +23,7 @@ def update(screen, coordinates, length, color, border_Radius):
     rect = pygame.Rect(coordinates.x, coordinates.y, length.x, length.y)
     draw.rect(screen, color, rect, border_radius=border_Radius)
 
+#  Function to draw the food
 def update_circle(color, coordinates, circle_radius):
     draw.circle(SCREEN, color, coordinates, circle_radius)
 
@@ -144,7 +147,7 @@ def draw_window(player, food, screen, screen_color):
     SCREEN.fill(screen_color)
     player.player_logic(screen, food)
     text = Font.render("Score: " + str(player.points), True, (255, 255, 255))
-    screen.blit(text, Vector2(0, 0))
+    screen.blit(text, Vector2(0, 0)) # Renders text to screen (aka score)
     display.update()
 
 SCREEN.fill(SCREEN_COLOR)
@@ -154,20 +157,13 @@ Food.generate(Player)
 # Main game loop
 def main():
     clock = pygame_time.Clock()
-    ONE_AT_A_TIME = False
     run = True
     while run:
         for Event in event.get():
             if Event.type == pygame.QUIT:
                 run = False
             elif key.get_focused and Event.type == pygame.KEYDOWN:
-                if Event.key == K_SPACE and ONE_AT_A_TIME == False:
-                    ONE_AT_A_TIME = True
-                elif Event.key == K_SPACE and ONE_AT_A_TIME == True:
-                    ONE_AT_A_TIME = False
-                elif Event.key == K_d and ONE_AT_A_TIME:
-                    draw_window(Player, Food, SCREEN, SCREEN_COLOR)
-                elif Event.key == K_RIGHT:
+                if Event.key == K_RIGHT:
                     try:
                         if Player.head_move_queue[-1] != 3 or Player.head_move_queue[-1] != 2:
                             Player.head_move_queue.append(3)
@@ -192,9 +188,8 @@ def main():
                     except IndexError:
                         Player.head_move_queue.append(1)
 
-        if ONE_AT_A_TIME == False:
-            clock.tick(FPS)
-            draw_window(Player, Food, SCREEN, SCREEN_COLOR)
+        clock.tick(FPS)
+        draw_window(Player, Food, SCREEN, SCREEN_COLOR)
     pygame.quit()
 
 if __name__ == "__main__":
