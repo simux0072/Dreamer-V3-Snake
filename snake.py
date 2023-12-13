@@ -22,7 +22,7 @@ class Snake:
 
     def update(self, ai_input):
         if len(self.body_parts) != 0:
-            for part in self.body_parts:
+            for part in reversed(self.body_parts):
                 part.update_part()
         self.head.update_head(ai_input)
         if self.check_collisions():
@@ -61,7 +61,7 @@ class Body_Part:
     def __init__(self, prev_part=None):
         self.prev_part:Body_Part = prev_part
         self.direction = prev_part.direction
-        self.coords: list[int, int] = [self.prev_part.coords[0] + DIRECTIONS[self.direction][0], self.prev_part.coords[1] + DIRECTIONS[self.direction][1]]
+        self.coords: list[int, int] = [self.prev_part.coords[0] - DIRECTIONS[self.direction][0], self.prev_part.coords[1] - DIRECTIONS[self.direction][1]]
     
     def update_part(self):
         self.coords = [self.prev_part.coords[0], self.prev_part.coords[1]]
