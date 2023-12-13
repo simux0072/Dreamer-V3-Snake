@@ -12,14 +12,42 @@ MAP_SIZE = [22, 22]
 
 class Snake:
     def __init__(self):
+        self.reset()
+
+    def reset(self):
         self.head = Body_Head()
         self.body_parts: list[Body_Part] = []
         self.food = Food()
         self.food.update_food_location([self.head])
 
-    def update(self):
+    def update(self, ai_input):
         if len(self.body_parts) != 0:
-            ...
+            for part in self.body_parts:
+                part.update_part()
+        self.head.update_head(ai_input)
+        if self.check_collisions():
+            return True, -1
+        
+        if self.check_if_eaten():
+            return False, 10
+        return False, 0
+    
+    def check_collisions(self):
+        if self.head.coords[0] <= 0 or self.head.coords[0] >= MAP_SIZE[0]:
+            return True
+        if self.head.coords[1] <= 0 or self.head.coords[1] >= MAP_SIZE[1]:
+            return True
+        return False
+    
+    def check_if_eaten(self):
+        if self.food.coords == self.head.coords:
+            self.food.update_food_location([self.head] + self.body_parts)
+            self.add_body_part()
+            return True
+        return False
+    
+    def add_body_part(self):
+        self.body_parts.append(Body_Part(self.body_parts[-1]))
         
     def update_map(self):
         current_map = numpy.zeros(MAP_SIZE, dtype=int)
@@ -29,17 +57,20 @@ class Snake:
         current_map[self.food.coords[1]][self.food.coords[0]] = 3
         return current_map
         
-        
 class Body_Part:
     def __init__(self, prev_part=None):
-        self.coords: list[int, int] = []
         self.prev_part:Body_Part = prev_part
+        self.direction = prev_part.direction
+        self.coords: list[int, int] = [self.prev_part.coords[0] + DIRECTIONS[self.direction][0], self.prev_part.coords[1] + DIRECTIONS[self.direction][1]]
     
     def update_part(self):
         self.coords = [self.prev_part.coords[0], self.prev_part.coords[1]]
 
 class Body_Head:
     def __init__(self):
+        self.reset()
+        
+    def reset(self):
         self.coords = [int(MAP_SIZE[0]/2), int(MAP_SIZE[1]/2)]
         self.direction = 1
     
@@ -48,7 +79,7 @@ class Body_Head:
         self.coords = [self.coords[0] + DIRECTIONS[self.direction][0], self.coords + DIRECTIONS[self.direction][1]]
         
 class Food:
-    def __init__(self):
+    def reset(self):
         self.coords = []
     
     def update_food_location(self, body_parts: list[Body_Part]):
