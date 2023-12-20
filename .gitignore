@@ -1,2 +1,3 @@
-test.py
-test2.py
+Sym_Functions/__pycache__/sym_networks.cpython-310.pyc
+models/*
+.gitignore
