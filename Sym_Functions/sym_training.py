@@ -12,8 +12,8 @@ optimizer = torch.optim.Adam(params=sym_net.parameters(), lr=0.0005)
 mse_loss = torch.nn.MSELoss()
 
 prev_model = torch.load("./models/sym_func_11720000.mdl")
-sym_net.state_dict(prev_model['model_state_dict'])
-optimizer.state_dict(prev_model['optimizer_state_dict'])
+sym_net.load_state_dict(prev_model['model_state_dict'])
+optimizer.load_state_dict(prev_model['optimizer_state_dict'])
 
 iter = prev_model['iter']
 
